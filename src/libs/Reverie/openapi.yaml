@@ -1,0 +1,414 @@
+openapi: 3.0.3
+info:
+  title: Reverie Language AI API
+  version: "1.0.0"
+  description: |
+    Focused OpenAPI description for Reverie language AI APIs.
+    Reverie exposes several products through shared endpoints and the
+    `REV-APPNAME` header; this spec models typed SDK methods and a partial
+    client hook routes them to the documented endpoints.
+  contact:
+    name: Reverie
+    url: https://docs.reverieinc.com/
+servers:
+  - url: https://revapi.reverieinc.com
+    description: Production
+security:
+  - ApiKeyAuth: []
+    AppIdAuth: []
+tags:
+  - name: TextToSpeech
+  - name: SpeechToText
+  - name: Translation
+  - name: Transliteration
+paths:
+  /tts:
+    post:
+      tags:
+        - TextToSpeech
+      operationId: textToSpeech
+      summary: Synthesize text to speech
+      description: "Routed to `POST /` with `REV-APPNAME: tts`."
+      parameters:
+        - $ref: "#/components/parameters/SpeakerHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TextToSpeechRequest"
+      responses:
+        "200":
+          description: Synthesized audio bytes.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /translate:
+    post:
+      tags:
+        - Translation
+      operationId: translate
+      summary: Translate text
+      description: "Routed to `POST /` with `REV-APPNAME: localization`."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranslationRequest"
+      responses:
+        "200":
+          description: Translated text.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslationResponse"
+
+  /transliterate:
+    post:
+      tags:
+        - Transliteration
+      operationId: transliterate
+      summary: Transliterate text
+      description: "Routed to `POST /` with `REV-APPNAME: transliteration`."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransliterationRequest"
+      responses:
+        "200":
+          description: Transliteration suggestions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransliterationResponse"
+
+  /stt/file:
+    post:
+      tags:
+        - SpeechToText
+      operationId: transcribeFile
+      summary: Transcribe a single audio file
+      description: "Routed to `POST /` with `REV-APPNAME: stt_file`."
+      parameters:
+        - $ref: "#/components/parameters/SourceLanguageHeader"
+        - $ref: "#/components/parameters/DomainHeader"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TranscribeFileRequest"
+      responses:
+        "200":
+          description: Transcription result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeechToTextResponse"
+
+  /upload:
+    post:
+      tags:
+        - SpeechToText
+      operationId: uploadBatchAudio
+      summary: Upload audio for batch transcription
+      parameters:
+        - $ref: "#/components/parameters/SourceLanguageHeader"
+        - $ref: "#/components/parameters/DomainHeader"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TranscribeFileRequest"
+      responses:
+        "200":
+          description: Batch transcription job.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchUploadResponse"
+
+  "/status?job_id={job_id}":
+    get:
+      tags:
+        - SpeechToText
+      operationId: getBatchStatus
+      summary: Get batch transcription status
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Batch status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchStatusResponse"
+
+  "/transcript?job_id={job_id}":
+    get:
+      tags:
+        - SpeechToText
+      operationId: getBatchTranscript
+      summary: Get batch transcription transcript
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Batch transcript.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchTranscriptResponse"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: REV-API-KEY
+      description: Reverie API key.
+    AppIdAuth:
+      type: apiKey
+      in: header
+      name: REV-APP-ID
+      description: Reverie app ID.
+
+  parameters:
+    SpeakerHeader:
+      name: speaker
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Reverie speaker code, e.g. `hi_female`.
+    SourceLanguageHeader:
+      name: src_lang
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Source language code.
+    DomainHeader:
+      name: domain
+      in: header
+      required: false
+      schema:
+        type: string
+        default: generic
+      description: Domain code for ASR.
+
+  schemas:
+    TextToSpeechRequest:
+      type: object
+      properties:
+        text:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        ssml:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        speed:
+          type: number
+          format: float
+          minimum: 0.5
+          maximum: 1.5
+        pitch:
+          type: number
+          format: float
+          minimum: -3
+          maximum: 3
+        sample_rate:
+          type: integer
+        format:
+          type: string
+          enum:
+            - WAV
+            - MP3
+            - PCM
+
+    TranslationRequest:
+      type: object
+      required:
+        - data
+        - src
+        - tgt
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+        src:
+          type: string
+        tgt:
+          type: string
+        domain:
+          type: string
+        enableTransliteration:
+          type: boolean
+        enableNmt:
+          type: boolean
+        nmtMask:
+          type: boolean
+        nmtMaskTerms:
+          type: array
+          items:
+            type: string
+
+    TranslationResponse:
+      type: object
+      properties:
+        responseList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TranslationItem"
+
+    TranslationItem:
+      type: object
+      properties:
+        inString:
+          type: string
+        outString:
+          type: string
+        apiStatus:
+          type: integer
+        status:
+          type: string
+
+    TransliterationRequest:
+      type: object
+      required:
+        - data
+        - src
+        - tgt
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+        src:
+          type: string
+        tgt:
+          type: string
+        domain:
+          type: string
+        noOfSuggestions:
+          type: integer
+          minimum: 1
+        isBulk:
+          type: boolean
+
+    TransliterationResponse:
+      type: object
+      properties:
+        responseList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransliterationItem"
+
+    TransliterationItem:
+      type: object
+      properties:
+        inString:
+          type: string
+        outString:
+          type: array
+          items:
+            type: string
+        apiStatus:
+          type: integer
+        status:
+          type: string
+
+    TranscribeFileRequest:
+      type: object
+      required:
+        - audio
+      properties:
+        audio:
+          type: string
+          format: binary
+
+    SpeechToTextResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        text:
+          type: string
+        transcript:
+          type: string
+        display_text:
+          type: string
+        cause:
+          type: string
+        confidence:
+          type: number
+          format: float
+
+    BatchUploadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        job_id:
+          type: string
+        cause:
+          type: string
+
+    BatchStatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        job_id:
+          type: string
+        status:
+          type: string
+        cause:
+          type: string
+
+    BatchTranscriptResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        job_id:
+          type: string
+        transcript:
+          type: string
+        utterances:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        cause:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        cause:
+          type: string
