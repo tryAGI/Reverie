@@ -150,7 +150,7 @@ namespace Reverie
                 PrepareTextToSpeechRequest(
                     httpClient: HttpClient,
                     httpRequestMessage: __httpRequest,
-                    speaker: speaker,
+                    speaker: speaker!,
                     request: request);
 
                 return __httpRequest;
