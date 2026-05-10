@@ -75,5 +75,6 @@ namespace Reverie
         public BatchTranscriptResponse()
         {
         }
+
     }
 }

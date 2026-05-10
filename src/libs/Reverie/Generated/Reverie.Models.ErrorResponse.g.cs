@@ -48,5 +48,6 @@ namespace Reverie
         public ErrorResponse()
         {
         }
+
     }
 }
