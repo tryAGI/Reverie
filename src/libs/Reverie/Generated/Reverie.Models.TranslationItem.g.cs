@@ -66,5 +66,6 @@ namespace Reverie
         public TranslationItem()
         {
         }
+
     }
 }
