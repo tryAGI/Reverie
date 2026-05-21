@@ -39,5 +39,6 @@ namespace Reverie
         public TransliterationResponse()
         {
         }
+
     }
 }

@@ -57,5 +57,6 @@ namespace Reverie
         public BatchUploadResponse()
         {
         }
+
     }
 }
