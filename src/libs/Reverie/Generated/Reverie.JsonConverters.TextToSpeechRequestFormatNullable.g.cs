@@ -20,7 +20,7 @@ namespace Reverie.JsonConverters
                     {
                         return global::Reverie.TextToSpeechRequestFormatExtensions.ToEnum(stringValue);
                     }
-                    
+
                     break;
                 }
                 case global::System.Text.Json.JsonTokenType.Number:

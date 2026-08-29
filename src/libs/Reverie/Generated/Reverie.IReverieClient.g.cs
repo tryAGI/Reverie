@@ -43,28 +43,28 @@ namespace Reverie
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         global::System.Text.Json.Serialization.JsonSerializerContext JsonSerializerContext { get; set; }
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SpeechToTextClient SpeechToText { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public TextToSpeechClient TextToSpeech { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public TranslationClient Translation { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public TransliterationClient Transliteration { get; }
 

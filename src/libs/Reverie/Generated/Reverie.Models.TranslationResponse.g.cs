@@ -4,12 +4,12 @@
 namespace Reverie
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed partial class TranslationResponse
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("responseList")]
         public global::System.Collections.Generic.IList<global::Reverie.TranslationItem>? ResponseList { get; set; }
