@@ -4,36 +4,36 @@
 namespace Reverie
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed partial class BatchTranscriptResponse
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("success")]
         public bool? Success { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("job_id")]
         public string? JobId { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("transcript")]
         public string? Transcript { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("utterances")]
         public global::System.Collections.Generic.IList<object>? Utterances { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [global::System.Text.Json.Serialization.JsonPropertyName("cause")]
         public string? Cause { get; set; }

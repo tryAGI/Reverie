@@ -4,7 +4,7 @@
 namespace Reverie
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed partial class BatchTranscriptResponseUtterance
     {

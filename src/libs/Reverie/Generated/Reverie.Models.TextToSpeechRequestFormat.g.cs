@@ -4,20 +4,20 @@
 namespace Reverie
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum TextToSpeechRequestFormat
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Mp3,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Pcm,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Wav,
     }
