@@ -34,7 +34,7 @@ namespace Reverie
         /// <inheritdoc/>
         public global::Reverie.AutoSDKClientOptions Options { get; }
 
-        internal global::System.Lazy<global::System.Text.Json.Serialization.JsonSerializerContext> JsonSerializerContextProvider { get; set; } = new(() => global::Reverie.SourceGenerationContext.Default);
+        internal global::System.Lazy<global::System.Text.Json.Serialization.JsonSerializerContext> JsonSerializerContextProvider { get; set; } = new(() => global::Reverie.TransliterationSourceGenerationContext.Default);
 
         /// <summary>
         ///
